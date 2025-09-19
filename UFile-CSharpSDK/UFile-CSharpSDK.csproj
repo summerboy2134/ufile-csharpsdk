@@ -49,6 +49,7 @@
     <Compile Include="Http\Http.cs" />
     <Compile Include="Digest\Digest.cs" />
     <Compile Include="Utils\MimeTypeMap.cs" />
+    <Compile Include="Utils\Base64.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

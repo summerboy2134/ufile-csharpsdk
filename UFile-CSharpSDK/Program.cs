@@ -32,10 +32,41 @@ namespace UFileCSharpSDK
             }
 
             {
-                //demo for deleting file
-                Console.WriteLine("deleting...please wait");
+                //demo for deleting file (synchronous)
+                Console.WriteLine("deleting synchronously...please wait");
                 Proxy.DeleteFileV2(bucket, key);
                 Console.WriteLine(string.Format("delete {0} {1} success", bucket, key));
+            }
+            
+            {
+                //demo for deleting file asynchronously 
+                Console.WriteLine("deleting asynchronously ...");
+                Proxy.DeleteFileAsync(bucket, key);
+                Console.WriteLine("delete request sent, continuing other work...");
+                Thread.Sleep(1000); 
+            }
+
+            {
+                //demo for deleting file asynchronously - with callback
+                Console.WriteLine("deleting asynchronously (with callback)...");
+                bool deleteCompleted = false;
+                
+                Proxy.DeleteFileAsync(bucket, key, (success, error) => {
+                    if (success) {
+                        Console.WriteLine("async delete success!");
+                    } else {
+                        Console.WriteLine(string.Format("async delete failed: {0}", error.Message));
+                    }
+                    deleteCompleted = true;
+                });
+                
+                Console.WriteLine("delete request sent, waiting for result...");
+                
+                while (!deleteCompleted) {
+                    Thread.Sleep(100);
+                    Console.Write(".");
+                }
+                Console.WriteLine("\nasync delete operation completed");
             }
 
             {
@@ -47,7 +78,7 @@ namespace UFileCSharpSDK
                 muploader.MFinish();
                 Console.WriteLine(string.Format("mupload {0} {1} success", bucket, key));
             }
-
+            
             {
                 //demo for multi uploading file, check etag
                 Console.WriteLine("uploading...please wait");
@@ -59,13 +90,13 @@ namespace UFileCSharpSDK
                 muploader.MFinish();
                 Console.WriteLine(string.Format("mupload {0} {1} success", bucket, key));
             }
-
+            
             {
                 //demo for multi uploading file manually
                 Console.WriteLine("uploading...please wait");
                 Proxy.MultiUploader muploader = new Proxy.MultiUploader(bucket, key, originFile);
                 muploader.MInit();
-
+            
                 bool finish = false;
                 for (long part = 0; part < 100000; ++part)
                 {

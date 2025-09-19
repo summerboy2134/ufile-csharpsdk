@@ -82,6 +82,18 @@ namespace UFileCSharpSDK
         public static void DeleteFileV2(string bucket, string key) {
             DeleteFile(bucket, key);
         }
+        
+        public static void DeleteFileAsync(string bucket, string key, Action<bool, Exception> callback = null)
+        {
+            ThreadPool.QueueUserWorkItem(_ => {
+                try {
+                    DeleteFile(bucket, key);  
+                    callback?.Invoke(true, null);  
+                } catch (Exception ex) {
+                    callback?.Invoke(false, ex);    
+                }
+            });
+        }
 
         [Obsolete("use method PutFileV2")]
 		public static string PutFile(string bucket, string key, string file) 
